@@ -6,6 +6,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 content_types = {"pdf", "jpg", "zip", "exe"} # Determine file types to skip unwanted files (e.g. .jpg, .zip, .exe)
 
 from urllib.parse import urlparse, urljoin
+
 import re
 
 TIMEOUT = 2
@@ -56,13 +57,14 @@ class PyCrawler(object):
         html = self.get_html(url)
 
         # extract base URL
+
         o = urlparse(url)
         if o.scheme:
             base = f"{o.scheme}://{o.netloc}"
         else:
             base = f"""http:{o.geturl()}"""
 
-        links = re.findall('''<a\\s+(?:[^>]*?\s+)?href="([^"]*)"''', html)
+        links = re.findall('''<a\s+(?:[^>]*?\s+)?href="([^"]*)"''', html)
         for i, link in enumerate(links):
             if not urlparse(link).netloc:
                 if link:
@@ -80,7 +82,6 @@ class PyCrawler(object):
         html = self.get_html(url)
         meta = re.findall("<meta .*?name=[\"'](.*?)['\"].*?content=[\"'](.*?)['\"].*?>", html)
         return dict(meta)
-
 
     def url_canonization(self, url):
         # DOING: URLcanonization
@@ -141,6 +142,7 @@ class PyCrawler(object):
             # Keep a lookup (hash) table of visited pages
             if link in self.visited: # Avoid fetching the same page twice
                 continue
+            # outF = open("links"++".txt", "w")
             self.visited.add(link)
             content_type = self.get_content_type(link)
             if content_type in content_types:
